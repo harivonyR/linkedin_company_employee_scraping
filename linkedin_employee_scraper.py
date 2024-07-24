@@ -5,10 +5,25 @@ import time
 import pandas as pd
 import json
 
-path = "pathtoyourchromedriver\chromedriver.exe"
-# download the chromedriver.exe from https://chromedriver.storage.googleapis.com/index.html?path=106.0.5249.21/
 
-driver = webdriver.Chrome(path)
+
+# download the chromedriver.exe from https://chromedriver.storage.googleapis.com/index.html?path=106.0.5249.21/
+chromeOptions = webdriver.ChromeOptions()
+
+download_directory = r"/output"
+prefs = {"download.default_directory" : download_directory}
+
+chromeOptions.add_experimental_option("prefs",prefs)
+chromeOptions.binary_location = r"C:\Users\harivonyratefiarison\eurodata_oto\chromeDriver\chrome.exe"
+
+## stability option
+chromeOptions.add_argument('--no-sandbox')
+chromeOptions.add_argument('--disable-dev-shm-usage')
+chromeOptions.add_argument('--disable-gpu')
+chromeOptions.add_argument('--remote-debugging-port=9222')  # Ensure no conflicts with other ports
+
+driver = webdriver.Chrome(options=chromeOptions)
+
 
 # Login
 def login():
@@ -170,7 +185,7 @@ def returnProfileInfo(employeeLink, companyName):
 
 if __name__ == "__main__":
     companies = ['apple'] #, 'microsoft', 'amazon', 'tesla-motors', 'google', 'nvidia', 'berkshire-hathaway', 'meta', 'unitedhealth-group'
-    login()
+    #login()
     employees = {}
     for company in companies:
         searchable = getProfileURLs(company)
