@@ -64,7 +64,21 @@ def getProfileURLs(companyName):
 
     invisibleEmployeeList = []
     invisibleEmployees = source.find_all('div', class_='artdeco-entity-lockup artdeco-entity-lockup--stacked-center artdeco-entity-lockup--size-7 ember-view')
-    for invisibleguy in invisibleEmployees:
+    print(f"Invisible Employees found: {len(invisibleEmployees)}")
+    
+    invisibleguy_soup = BeautifulSoup(str(invisibleEmployees[6]), 'html.parser')
+    print(invisibleguy_soup)
+        
+    invisibleguy = invisibleguy_soup.find_all('div',class_='lt-line-clamp')
+    print(invisibleguy[0].text.strip('\n').strip('  ')) # name
+    print(invisibleguy[1].text.strip('\n').strip('  ')) # title
+    
+    profilepiclink = ""
+    #visibleProfilepiclink = invisibleguy.find('img', class_='lazy-image ember-view')
+    invisibleProfilepicLink = invisibleguy_soup.find('img').get('src')
+    print(invisibleProfilepicLink)
+    
+""" for invisibleguy in invisibleEmployees:
         title = invisibleguy.findNext('div', class_='lt-line-clamp lt-line-clamp--multi-line ember-view').contents[0].strip('\n').strip('  ')
         invisibleEmployeeList.append(title)
 
@@ -79,7 +93,7 @@ def getProfileURLs(companyName):
 
         if profilepiclink not in invisibleEmployees:
             invisibleEmployeeList.append(profilepiclink)
-    return (visibleEmployeesList[5:], invisibleEmployeeList)
+    return (visibleEmployeesList[5:], invisibleEmployeeList) """
 
 # Testing spreadsheet of urls
 # profilesToSearch = pd.DataFrame(columns=["ProfileID", "Title", "ProfilePicLink"])
@@ -182,6 +196,18 @@ def returnProfileInfo(employeeLink, companyName):
                 profile.append(parseType1Job(row))
 
     return profile
+
+def test():
+    company = ['apple']
+    #login()
+    employees = {}
+    searchable = getProfileURLs(company)
+    
+    for employee in searchable[0]:
+        employees[employee] = returnProfileInfo(employee, company)
+    
+    with open('m&a.json', 'w') as f:
+        json.dump(employees, f)
 
 if __name__ == "__main__":
     companies = ['apple'] #, 'microsoft', 'amazon', 'tesla-motors', 'google', 'nvidia', 'berkshire-hathaway', 'meta', 'unitedhealth-group'
